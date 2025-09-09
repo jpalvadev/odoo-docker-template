@@ -18,7 +18,6 @@ add_or_replace() {
 [ -n "$DB_HOST" ]        && add_or_replace "db_host" "$DB_HOST"
 [ -n "$DB_USER" ]        && add_or_replace "db_user" "$DB_USER"
 [ -n "$DB_PASSWORD" ]    && add_or_replace "db_password" "$DB_PASSWORD"
-[ -n "$DB_NAME" ]        && add_or_replace "db_name" "$DB_NAME"
 [ -n "$ADMIN_PASSWORD" ] && add_or_replace "admin_passwd" "$ADMIN_PASSWORD"
 
 exec "$@"
