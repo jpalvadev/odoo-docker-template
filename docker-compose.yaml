@@ -1,65 +1,19 @@
-# version: '3'
-
-# services:
-#     web:
-#         container_name: ${WEB_HOST}
-#         image: ${WEB_IMAGE_NAME}
-#         # depends_on:
-#         #     - db
-#         ports:
-#             - '${WEB_PORT}:8069'
-#             - '${WEBSOCKET_PORT}:8072'
-#         environment:
-#             - DB_HOST=${DB_HOST}
-#             - DB_USER=${DB_USER}
-#             - DB_PASSWORD=${DB_PASSWORD}
-#             - DB_NAME=${DB_NAME}
-#             - ADMIN_PASSWORD=${ADMIN_PASSWORD}
-#         volumes:
-#             - ./set_odoo_conf.sh:/usr/local/bin/set_odoo_conf.sh
-#             - odoo-web-data:/var/lib/odoo
-#             - ./config:/etc/odoo
-#             - ./addons:/mnt/extra-addons
-#         entrypoint:
-#             [
-#                 'bash',
-#                 '/usr/local/bin/set_odoo_conf.sh',
-#                 '/usr/bin/odoo',
-#                 '-c',
-#                 '/etc/odoo/odoo.conf',
-#             ]
-
-#     # db:
-#     #     container_name: ${DB_HOST}
-#     #     image: ${DB_IMAGE}
-#     #     environment:
-#     #         - POSTGRES_DB=${DB_NAME}
-#     #         - POSTGRES_PASSWORD=${DB_PASSWORD}
-#     #         - POSTGRES_USER=${DB_USER}
-#     #         - PGDATA=/var/lib/postgresql/data/pgdata
-#     #     ports:
-#     #         - '${DB_PORT}:5432'
-#     #     volumes:
-#     #         - odoo-db-data:/var/lib/postgresql/data/pgdata
-
-# volumes:
-#     # odoo-db-data:
-#     odoo-web-data:
-
 version: '3'
 
 services:
     web:
         container_name: ${WEB_HOST}
         image: ${WEB_IMAGE_NAME}
+        # depends_on:
+        #     - db
         ports:
             - '${WEB_PORT}:8069'
             - '${WEBSOCKET_PORT}:8072'
         environment:
-            - DB_HOST=${DB_HOST} # host de Render Postgres
-            - DB_USER=${DB_USER} # usuario Postgres de Render
-            - DB_PASSWORD=${DB_PASSWORD}# password
-            - DB_NAME=${DB_NAME} # nombre de la DB existente en Render
+            - DB_HOST=${DB_HOST}
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
+            - DB_NAME=${DB_NAME}
             - ADMIN_PASSWORD=${ADMIN_PASSWORD}
         volumes:
             - ./set_odoo_conf.sh:/usr/local/bin/set_odoo_conf.sh
@@ -67,14 +21,27 @@ services:
             - ./config:/etc/odoo
             - ./addons:/mnt/extra-addons
         entrypoint:
-            - bash
-            - -c
-            - |
-                # inicializa la base de datos si está vacía
-                echo "Inicializando Odoo..."
-                /usr/bin/odoo -c /etc/odoo/odoo.conf -i base --stop-after-init || true
-                echo "Arrancando Odoo normalmente..."
-                /usr/bin/odoo -c /etc/odoo/odoo.conf
+            [
+                'bash',
+                '/usr/local/bin/set_odoo_conf.sh',
+                '/usr/bin/odoo',
+                '-c',
+                '/etc/odoo/odoo.conf',
+            ]
+
+    db:
+        container_name: ${DB_HOST}
+        image: ${DB_IMAGE}
+        environment:
+            - POSTGRES_DB=${DB_NAME}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+            - POSTGRES_USER=${DB_USER}
+            - PGDATA=/var/lib/postgresql/data/pgdata
+        ports:
+            - '${DB_PORT}:5432'
+        volumes:
+            - odoo-db-data:/var/lib/postgresql/data/pgdata
 
 volumes:
+    odoo-db-data:
     odoo-web-data:
